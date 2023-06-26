@@ -47,4 +47,47 @@ $(function () {
       $messages.append($message);
 
   }
+          const recognition = new window.webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        const startButton = document.getElementById("start-button");
+        const stopButton = document.getElementById("stop-button");
+        const input = document.getElementById("input");
+
+        // Variable to save the transcript
+        let recordedSpeech = "";
+
+        startButton.addEventListener("click", () => {
+            recognition.start();
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        stopButton.addEventListener("click", () => {
+            recognition.stop();
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        recognition.addEventListener("result", event => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join("");
+            input.textContent = transcript;
+
+            // Save the transcript to the variable
+            recordedSpeech = transcript;
+        });
+
+        recognition.addEventListener("end", () => {
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        // Function to use the recorded speech
+        function useRecordedSpeech() {
+            // You can use the recordedSpeech variable here
+            console.log(recordedSpeech);
+        }
 });
