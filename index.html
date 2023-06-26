@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Primer</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+<!--    <link rel="stylesheet" href="style.css">-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="message"></div>
+    <div id="messages"></div>
+    <div id="buttons">
+        <button class="choose-file-btn" id="start-button">Start Recording</button>
+        <button class="choose-file-btn" id="stop-button" disabled>Stop Recording</button>
+    </div>
+    <form id="file-form">
+        <div id="voice-recording-section">
+            <!-- VOICE RECORDING SECTION -->
+            <textarea id="input" rows="10" cols="50"></textarea>
+            <div id="output"></div>
+        </div>
+        <input type="hidden" id="selected-words" value="">
+    </form>
+    <script>
+        const recognition = new window.webkitSpeechRecognition();
+        recognition.continuous = true;
+        recognition.interimResults = true;
+
+        const startButton = document.getElementById("start-button");
+        const stopButton = document.getElementById("stop-button");
+        const input = document.getElementById("input");
+
+        // Variable to save the transcript
+        let recordedSpeech = "";
+
+        startButton.addEventListener("click", () => {
+            recognition.start();
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        stopButton.addEventListener("click", () => {
+            recognition.stop();
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        recognition.addEventListener("result", event => {
+            const transcript = Array.from(event.results)
+                .map(result => result[0].transcript)
+                .join("");
+            input.textContent = transcript;
+
+            // Save the transcript to the variable
+            recordedSpeech = transcript;
+        });
+
+        recognition.addEventListener("end", () => {
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+        // Function to use the recorded speech
+        function useRecordedSpeech() {
+            // You can use the recordedSpeech variable here
+            console.log(recordedSpeech);
+        }
+    </script>
+    <style>
+        .selected {
+            background-color: blue;
+        }
+    </style>
+</div>
+</body>
+</html>
