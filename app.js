@@ -10,8 +10,6 @@ $(function () {
 
   var $messages = $('#messages');
 
-  addMessage('AI Primer', 'How may I assist you?', 'received', showButtons);
-
   var capturedText = ""; // will need to store the recorded text
 
   function showButtons() {
@@ -37,10 +35,6 @@ $(function () {
               index++;
           }
       }, 50);
-
-    // Use the Web Speech API to speak the message
-    var utterance = new SpeechSynthesisUtterance(content);
-    speechSynthesis.speak(utterance);
 
       $message.append($sender).append($content);
       $messages.append($message);
@@ -82,13 +76,6 @@ $(function () {
         function useRecordedSpeech() {
             console.log(recordedSpeech);
 
-        }
-
-
-        // Function to use the recorded speech
-        function useRecordedSpeech() {
-            console.log(recordedSpeech);
-
         // make a fetch request
         fetch('http://localhost:5000/respond', {
         method: 'POST',
@@ -100,15 +87,14 @@ $(function () {
         .then(response => response.json())
         .then(response => {
             console.log(response.data); // inspect the structure of the data
+            document.getElementById('chatgpt-response').textContent = response.data;
             const msg = new SpeechSynthesisUtterance(response.data);
             window.speechSynthesis.speak(msg);
         })
         .catch((error) => {
             console.error('Error:', error);
         });
-//        console.log("After making fetch request....")
     }
-
 
         recognition.addEventListener("end", () => {
             startButton.disabled = false;
