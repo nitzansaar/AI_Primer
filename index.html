@@ -4,6 +4,14 @@
     <title>AI Primer</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .center-align {
+            text-align: center;
+        }
+        .center-align textarea {
+            margin: 0 auto;
+        }
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="app.js"></script>
 </head>
@@ -11,15 +19,14 @@
 <div class="container">
     <div class="message"></div>
     <div id="messages"></div>
-    <div id="buttons">
+    <div id="buttons" class="center-align">
         <button class="recording-btn" id="start-button">Start Recording</button>
         <button class="recording-btn" id="stop-button" disabled>Stop Recording</button>
     </div>
     <form id="file-form">
-        <div id="voice-recording-section">
+        <div id="voice-recording-section" class="center-align">
             <textarea id="input" rows="10" cols="50"></textarea>
-            <!-- Added another text area here with id 'chatgpt-response' -->
-            <textarea id="chatgpt-response" rows="10" cols="50"></textarea>
+            <textarea id="chatgpt-response" rows="10" cols="50" disabled></textarea>
             <div id="output"></div>
         </div>
         <input type="hidden" id="selected-words" value="">
