@@ -38,16 +38,15 @@ $(function () {
           }
       }, 50);
 
-
-        // Use the Web Speech API to speak the message
-        var utterance = new SpeechSynthesisUtterance(content);
-        speechSynthesis.speak(utterance);
+    // Use the Web Speech API to speak the message
+    var utterance = new SpeechSynthesisUtterance(content);
+    speechSynthesis.speak(utterance);
 
       $message.append($sender).append($content);
       $messages.append($message);
 
-  }
-          const recognition = new window.webkitSpeechRecognition();
+    }
+        const recognition = new window.webkitSpeechRecognition();
         recognition.continuous = true;
         recognition.interimResults = true;
 
@@ -55,8 +54,7 @@ $(function () {
         const stopButton = document.getElementById("stop-button");
         const input = document.getElementById("input");
 
-        // Variable to save the transcript
-        let recordedSpeech = "";
+        let recordedSpeech = ""; // do we need?
 
         startButton.addEventListener("click", () => {
             recognition.start();
@@ -76,18 +74,45 @@ $(function () {
                 .join("");
             input.textContent = transcript;
 
-            // Save the transcript to the variable
+            // Save the transcript to the variable?
             recordedSpeech = transcript;
-        });
-
-        recognition.addEventListener("end", () => {
-            startButton.disabled = false;
-            stopButton.disabled = true;
         });
 
         // Function to use the recorded speech
         function useRecordedSpeech() {
-            // You can use the recordedSpeech variable here
             console.log(recordedSpeech);
+
         }
+
+
+        // Function to use the recorded speech
+        function useRecordedSpeech() {
+            console.log(recordedSpeech);
+
+        // make a fetch request
+        fetch('http://localhost:5000/respond', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+            body: JSON.stringify({ prompt: recordedSpeech }) // Here, you are sending recordedSpeech to the server
+        })
+        .then(response => response.json())
+        .then(response => {
+            console.log(response.data); // inspect the structure of the data
+            const msg = new SpeechSynthesisUtterance(response.data);
+            window.speechSynthesis.speak(msg);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+//        console.log("After making fetch request....")
+    }
+
+
+        recognition.addEventListener("end", () => {
+            startButton.disabled = false;
+            stopButton.disabled = true;
+            useRecordedSpeech();
+        });
 });
