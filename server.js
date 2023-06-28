@@ -7,7 +7,7 @@
  require("dotenv").config();
  const cors = require('cors');
 
- app.use(cors()); // Enable CORS for all routes
+ app.use(cors()); // Enable CORS for all routes (Cross Origin Resource Sharing)
  app.use(express.json());
 
  const configuration = new Configuration({
@@ -20,7 +20,7 @@
     const prompt = req.body.prompt;
      const response = await openai.createCompletion({
        model: "text-davinci-003",
-       prompt: prompt,
+       prompt: "I am a highly intelligent question answering bot. If you ask me a question that is rooted in truth, I will give you the answer. If you ask me a question that is nonsense, trickery, or has no clear answer, I will respond with \"Unknown\"" + prompt,
        temperature: 0.9,
        max_tokens: 150,
        top_p: 1,
