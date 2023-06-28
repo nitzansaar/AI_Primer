@@ -1,6 +1,3 @@
-/*
-* Nitzan Saar
-*/
 $(function () {
 
   // Get references to the input and button elements

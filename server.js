@@ -1,6 +1,3 @@
- /*
-* Nitzan Saar
-*/
  const express = require("express");
  const app = express();
  const { Configuration, OpenAIApi } = require("openai");
