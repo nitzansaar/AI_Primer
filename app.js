@@ -1,5 +1,4 @@
 $(function () {
-
   // Get references to the input and button elements
   var $button = $('#send-button');
   var $messages = $('.messages');
@@ -9,8 +8,6 @@ $(function () {
   var $record = $('choose-input');
 
   var $messages = $('#messages');
-
-//  var capturedText = "";
 
   function showButtons() {
       setTimeout(function () {
@@ -38,95 +35,95 @@ $(function () {
 
       $message.append($sender).append($content);
       $messages.append($message);
+  }
 
-    }
-        const recognition = new window.webkitSpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
+  const recognition = new window.webkitSpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
 
-        const startButton = document.getElementById("start-button");
-        const stopButton = document.getElementById("stop-button");
-        const input = document.getElementById("input");
+  const startButton = document.getElementById("start-button");
+  const stopButton = document.getElementById("stop-button");
+  const input = document.getElementById("input");
 
-        let recordedSpeech = "";
-        let conversationLog = [];
+  let recordedSpeech = "";
+  let conversationLog = [];
 
-        startButton.addEventListener("click", () => {
-            recognition.start();
-            startButton.disabled = true;
-            stopButton.disabled = false;
-        });
+  startButton.addEventListener("click", () => {
+      recognition.start();
+      startButton.disabled = true;
+      stopButton.disabled = false;
+  });
 
-        stopButton.addEventListener("click", () => {
-            recognition.stop();
-            startButton.disabled = false;
-            stopButton.disabled = true;
-        });
+  stopButton.addEventListener("click", () => {
+      recognition.stop();
+      startButton.disabled = false;
+      stopButton.disabled = true;
+  });
 
-        recognition.addEventListener("result", event => {
-            const transcript = Array.from(event.results)
-                .map(result => result[0].transcript)
-                .join("");
-            input.textContent = transcript;
+  recognition.addEventListener("result", event => {
+      const transcript = Array.from(event.results)
+          .map(result => result[0].transcript)
+          .join("");
+      input.textContent = transcript;
 
-            recordedSpeech = transcript;
-        });
+      recordedSpeech = transcript;
+  });
 
-        window.speechSynthesis.onvoiceschanged = function() {
+  window.speechSynthesis.onvoiceschanged = function() {
+    var voices = window.speechSynthesis.getVoices();
+  };
+
+  function speakLongText(text, voice, index = 0) {
+    // Show the avatar
+    document.getElementById("avatar").style.display = "block";
+
+    // Split the text into sentences (or smaller parts if needed)
+    const parts = text.match(/[^\.!\?]+[\.!\?]+/g);
+    const utterance = new SpeechSynthesisUtterance(parts[index]);
+    utterance.voice = voice;
+
+    utterance.onend = function () {
+      if (parts.length > index + 1) {
+        speakLongText(text, voice, index + 1);
+      } else {
+        // Hide the avatar when the AI is done speaking
+        document.getElementById("avatar").style.display = "none";
+      }
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  // Function to use the recorded speech
+  function useRecordedSpeech() {
+      console.log(recordedSpeech);
+
+      // make a fetch request
+      fetch('http://localhost:5000/respond', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: recordedSpeech }) // send recordedSpeech to the server
+      })
+      .then(response => response.json())
+      .then(response => {
+          console.log(response.data); // inspect the structure of the data
+          document.getElementById('chatgpt-response').textContent += "\nAI: " + response.data;
           var voices = window.speechSynthesis.getVoices();
-          // Print all available voices
-/*          for(var i = 0; i < voices.length; i++ ) {
-            console.log("Voice " + (i+1) + ": " + voices[i].name + " (" + voices[i].lang + ")");
-          }*/
-        };
+          var chosenVoice = voices[49];
+          // Change this to use the speakLongText function instead of speechSynthesis.speak
+          speakLongText(response.data, chosenVoice);
 
-        function speakLongText(text, voice, index = 0) {
-          // Split the text into sentences (or smaller parts if needed)
-          const parts = text.match(/[^\.!\?]+[\.!\?]+/g);
-          const utterance = new SpeechSynthesisUtterance(parts[index]);
-          utterance.voice = voice;
+      })
+      .catch((error) => {
+          console.error('Error:', error);
+      });
+  }
 
-          utterance.onend = function () {
-            if (parts.length > index + 1) {
-              speakLongText(text, voice, index + 1);
-            }
-          };
-
-          window.speechSynthesis.speak(utterance);
-        }
-
-        // Function to use the recorded speech
-        function useRecordedSpeech() {
-            console.log(recordedSpeech);
-
-        // make a fetch request
-        fetch('http://localhost:5000/respond', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-            body: JSON.stringify({ prompt: recordedSpeech }) // send recordedSpeech to the server
-        })
-        .then(response => response.json())
-        .then(response => {
-            console.log(response.data); // inspect the structure of the data
-            document.getElementById('chatgpt-response').textContent += "\nAI: " + response.data;
-            var voices = window.speechSynthesis.getVoices();
-            var chosenVoice = voices[49];
-            const msg = new SpeechSynthesisUtterance(response.data);
-            msg.voice = chosenVoice;
-//            window.speechSynthesis.speak(msg);
-            speakLongText(response.data, chosenVoice);
-
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
-    }
-
-        recognition.addEventListener("end", () => {
-            startButton.disabled = false;
-            stopButton.disabled = true;
-            useRecordedSpeech();
-        });
+  recognition.addEventListener("end", () => {
+      startButton.disabled = false;
+      stopButton.disabled = true;
+      useRecordedSpeech();
+  });
 });

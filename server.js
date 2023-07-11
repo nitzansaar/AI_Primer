@@ -21,7 +21,7 @@
     const prompt = req.body.prompt;
      const response = await openai.createCompletion({
        model: "text-davinci-003",
-       prompt: prompt,
+       prompt: " respond as if i am 12 years old",
        temperature: 0.9,
        max_tokens: 150,
        top_p: 1,

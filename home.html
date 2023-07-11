@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            background-color: #A2D2FF; /* baby blue */
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* comic sans */
+            text-align: center; /* center text */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 60vh;
+            padding: 0 10px; /* Add some padding to prevent text from reaching the edge of the screen */
+            margin-bottom: 20vh; /* additional space at the bottom */
+        }
+
+        h1 {
+            font-size: 60px;
+        }
+
+        #animated-text {
+            margin: 0 auto;
+            letter-spacing: .15em;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>EdTech!</h1>
+        <p id="animated-text"></p>
+        <button onclick="location.href='index.html'">Go to AI Primer</button>
+    </div>
+
+    <script>
+        var text = 'Fun fuels brilliant minds.'
+        var index = 0;
+
+        function typeText() {
+            if (index < text.length) {
+                $('#animated-text').append(text.charAt(index));
+                index++;
+                setTimeout(typeText, 50);
+            }
+        }
+
+        $(document).ready(function() {
+            setTimeout(typeText, 1500);
+        });
+    </script>
+</body>
+</html>
