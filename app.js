@@ -73,26 +73,38 @@ $(function () {
     var voices = window.speechSynthesis.getVoices();
   };
 
-  function speakLongText(text, voice, index = 0) {
-    // Show the avatar
-    document.getElementById("avatar").style.display = "block";
+function speakLongText(text, voice, index = 0) {
+  // Show the avatar
+  document.getElementById("avatar").style.display = "block";
 
-    // Split the text into sentences (or smaller parts if needed)
-    const parts = text.match(/[^\.!\?]+[\.!\?]+/g);
-    const utterance = new SpeechSynthesisUtterance(parts[index]);
-    utterance.voice = voice;
+  // Try to split the text into sentences
+  let parts = text.match(/[^\.!\?]+[\.!\?]+/g);
 
-    utterance.onend = function () {
-      if (parts.length > index + 1) {
-        speakLongText(text, voice, index + 1);
-      } else {
-        // Hide the avatar when the AI is done speaking
-        document.getElementById("avatar").style.display = "none";
-      }
-    };
-
-    window.speechSynthesis.speak(utterance);
+  // If there are no ".", "!", or "?" characters, split the text into chunks of 80 characters
+  if (!parts) {
+    parts = text.match(/.{1,80}/g);
   }
+
+  const utterance = new SpeechSynthesisUtterance(parts[index]);
+  utterance.voice = voice;
+  utterance.rate = 1.1;
+
+  utterance.onend = function () {
+    if (parts.length > index + 1) {
+      // Add a delay before starting the next utterance
+      setTimeout(function () {
+        speakLongText(text, voice, index + 1);
+      }, 10);
+    } else {
+      // Hide the avatar when the AI is done speaking
+      document.getElementById("avatar").style.display = "none";
+    }
+  };
+
+  window.speechSynthesis.speak(utterance);
+}
+
+
 
   // Function to use the recorded speech
   function useRecordedSpeech() {
