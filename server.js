@@ -1,17 +1,18 @@
  /*
  * Nitzan Saar
  */
+ const portNum = 5000;
  const express = require("express");
  const app = express();
  const { Configuration, OpenAIApi } = require("openai");
  require("dotenv").config();
  const cors = require('cors');
 
- app.use(cors()); // Enable CORS for all routes (Cross Origin Resource Sharing)
+ app.use(cors()); // Enable CORS for all routes
  app.use(express.json());
 
  const configuration = new Configuration({
-   apiKey: process.env.API_KEY,
+   apiKey: process.env.OPENAI_API_KEY,
  });
  const openai = new OpenAIApi(configuration);
 
@@ -20,7 +21,7 @@
     const prompt = req.body.prompt;
      const response = await openai.createCompletion({
        model: "text-davinci-003",
-       prompt: "I am a highly intelligent question answering bot. If you ask me a question that is rooted in truth, I will give you the answer. If you ask me a question that is nonsense, trickery, or has no clear answer, I will respond with \"Unknown\"" + prompt,
+       prompt: prompt,
        temperature: 0.9,
        max_tokens: 150,
        top_p: 1,
@@ -37,5 +38,5 @@
    }
  });
 
- const port = process.env.PORT || 5000;
+ const port = process.env.PORT || portNum;
  app.listen(port, () => console.log('Listening on port:', port));

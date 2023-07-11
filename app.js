@@ -10,7 +10,7 @@ $(function () {
 
   var $messages = $('#messages');
 
-  var capturedText = ""; // will need to store the recorded text
+//  var capturedText = "";
 
   function showButtons() {
       setTimeout(function () {
@@ -48,7 +48,8 @@ $(function () {
         const stopButton = document.getElementById("stop-button");
         const input = document.getElementById("input");
 
-        let recordedSpeech = ""; // do we need?
+        let recordedSpeech = "";
+        let conversationLog = [];
 
         startButton.addEventListener("click", () => {
             recognition.start();
@@ -68,9 +69,31 @@ $(function () {
                 .join("");
             input.textContent = transcript;
 
-            // Save the transcript to the variable?
             recordedSpeech = transcript;
         });
+
+        window.speechSynthesis.onvoiceschanged = function() {
+          var voices = window.speechSynthesis.getVoices();
+          // Print all available voices
+/*          for(var i = 0; i < voices.length; i++ ) {
+            console.log("Voice " + (i+1) + ": " + voices[i].name + " (" + voices[i].lang + ")");
+          }*/
+        };
+
+        function speakLongText(text, voice, index = 0) {
+          // Split the text into sentences (or smaller parts if needed)
+          const parts = text.match(/[^\.!\?]+[\.!\?]+/g);
+          const utterance = new SpeechSynthesisUtterance(parts[index]);
+          utterance.voice = voice;
+
+          utterance.onend = function () {
+            if (parts.length > index + 1) {
+              speakLongText(text, voice, index + 1);
+            }
+          };
+
+          window.speechSynthesis.speak(utterance);
+        }
 
         // Function to use the recorded speech
         function useRecordedSpeech() {
@@ -82,14 +105,19 @@ $(function () {
         headers: {
             'Content-Type': 'application/json'
         },
-            body: JSON.stringify({ prompt: recordedSpeech }) // Here, you are sending recordedSpeech to the server
+            body: JSON.stringify({ prompt: recordedSpeech }) // send recordedSpeech to the server
         })
         .then(response => response.json())
         .then(response => {
             console.log(response.data); // inspect the structure of the data
-            document.getElementById('chatgpt-response').textContent = response.data;
+            document.getElementById('chatgpt-response').textContent += "\nAI: " + response.data;
+            var voices = window.speechSynthesis.getVoices();
+            var chosenVoice = voices[49];
             const msg = new SpeechSynthesisUtterance(response.data);
-            window.speechSynthesis.speak(msg);
+            msg.voice = chosenVoice;
+//            window.speechSynthesis.speak(msg);
+            speakLongText(response.data, chosenVoice);
+
         })
         .catch((error) => {
             console.error('Error:', error);
