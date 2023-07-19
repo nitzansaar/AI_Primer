@@ -21,7 +21,7 @@
     const prompt = req.body.prompt;
      const response = await openai.createCompletion({
        model: "text-davinci-003",
-       prompt: prompt,
+       prompt: prompt + ". answer as if you are my personal assistant",
        temperature: 0.9,
        max_tokens: 150,
        top_p: 1,

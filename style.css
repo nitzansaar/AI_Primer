@@ -1,5 +1,5 @@
     body {
-        font-family: 'Comic Sans MS', cursive, sans-serif
+        font-family: 'Comic Sans MS', cursive, sans-serif;
         background-color: #f2f2f2;
         margin: 0;
         padding: 0;
@@ -77,9 +77,9 @@
 
     #avatar {
     position: fixed;
-    top: 65%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 220px;
-    max-height: 220px;
+    max-width: 400px;
+    max-height: 400px;
 }
