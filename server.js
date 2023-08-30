@@ -1,15 +1,27 @@
-/*
- * Nitzan Saar
- */
 const portNum = 5000;
 const express = require("express");
 const app = express();
 const { Configuration, OpenAIApi } = require("openai");
+const mongoose = require("mongoose");
 require("dotenv").config();
 const cors = require('cors');
 
 app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
+
+// MongoDB Connection
+const mongodbURI = process.env.MONGO_URI; // replace with your MongoDB connection URI
+mongoose.connect(mongodbURI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.log(err));
+
+// Define MongoDB Schema and Model for Conversations
+const ConversationSchema = new mongoose.Schema({
+  userId: String,
+  logs: Array
+});
+
+const Conversation = mongoose.model("Conversation", ConversationSchema);
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -19,12 +31,20 @@ const openai = new OpenAIApi(configuration);
 app.post("/respond", async (req, res) => {
   try {
     const prompt = req.body.prompt;
-    const conversationLog = req.body.conversationLog || [];
+    const userId = req.body.userId || "defaultUser"; // You can assign unique user IDs for different users in future enhancements
+
+    // Fetch the conversation log for the user
+    let userConversation = await Conversation.findOne({ userId: userId });
+
+    if (!userConversation) {
+      userConversation = new Conversation({
+        userId: userId,
+        logs: []
+      });
+    }
 
     // Combine conversation history with the new prompt
-    const fullPrompt = "Here's a recap of our conversation:\n" + 
-    conversationLog.map(entry => `${entry.role}: ${entry.content}`).join("\n") + 
-    "\nHuman: " + prompt;
+    const fullPrompt = userConversation.logs.map(entry => `${entry.role}: ${entry.content}`).join("\n") + "\nUser: " + prompt;
 
     const response = await openai.createCompletion({
       model: "text-davinci-003",
@@ -38,6 +58,13 @@ app.post("/respond", async (req, res) => {
     });
 
     const aiResponse = response.data.choices[0].text.trim();
+
+    // Update the conversation log
+    userConversation.logs.push({ role: "user", content: prompt });
+    userConversation.logs.push({ role: "ai", content: aiResponse });
+
+    await userConversation.save();
+
     return res.status(200).json({ data: aiResponse });
   } catch (error) {
     console.error("Error:", error);
