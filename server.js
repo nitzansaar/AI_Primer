@@ -10,7 +10,7 @@ app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 
 // MongoDB Connection
-const mongodbURI = process.env.MONGO_URI; // replace with your MongoDB connection URI
+const mongodbURI = process.env.MONGO_URI; 
 mongoose.connect(mongodbURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
@@ -31,7 +31,7 @@ const openai = new OpenAIApi(configuration);
 app.post("/respond", async (req, res) => {
   try {
     const prompt = req.body.prompt;
-    const userId = req.body.userId || "defaultUser"; // You can assign unique user IDs for different users in future enhancements
+    const userId = req.body.userId || "defaultUser";
 
     // Fetch the conversation log for the user
     let userConversation = await Conversation.findOne({ userId: userId });
@@ -50,14 +50,19 @@ app.post("/respond", async (req, res) => {
       model: "text-davinci-003",
       prompt: fullPrompt,
       temperature: 0.9,
-      max_tokens: 150,
+      max_tokens: 2000,
       top_p: 1,
       frequency_penalty: 0.0,
       presence_penalty: 0.6,
       stop: [" Human:", " AI:"],
     });
 
-    const aiResponse = response.data.choices[0].text.trim();
+    let aiResponse = response.data.choices[0].text.trim();
+
+    // Check if the response is empty or doesn't make sense
+    if (!aiResponse || aiResponse === "") {
+      aiResponse = "I don't understand.";
+    }
 
     // Update the conversation log
     userConversation.logs.push({ role: "user", content: prompt });
