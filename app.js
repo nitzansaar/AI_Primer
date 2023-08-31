@@ -4,6 +4,7 @@ $(function () {
     const $messages = $('#messages');
     const $hiddenDiv = $('.hidden');
     const $resetButton = $('#reset-button');
+    const $typingIndicator = $('<div id="chatbot-typing"><span>.</span><span>.</span><span>.</span></div>').appendTo('#messages').hide();
     
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
@@ -61,6 +62,16 @@ $(function () {
         recordedSpeech = transcript;
     });
 
+    // Function to show the "typing" animation
+    function showTypingAnimation() {
+        $typingIndicator.show();
+    }
+
+    // Function to hide the "typing" animation
+    function hideTypingAnimation() {
+        $typingIndicator.hide();
+    }
+
     // Function to generate a random ID
     function generateRandomId() {
         return Math.random().toString(36).substr(2, 9); // generates a random string
@@ -102,6 +113,8 @@ $(function () {
         conversationLog.push({ role: "user", content: recordedSpeech });
 
         console.log(recordedSpeech);
+
+        showTypingAnimation();
     
         fetch('http://localhost:5000/respond', {
             method: 'POST',
@@ -116,6 +129,7 @@ $(function () {
         })
         .then(response => response.json())
         .then(response => {
+            hideTypingAnimation();
             // Fallback if the response is empty or doesn't meet certain criteria
             let botResponse = response.data;
             if (!botResponse || botResponse.trim() === "") {
@@ -133,6 +147,7 @@ $(function () {
             window.speechSynthesis.speak(msg);
         })
         .catch(error => {
+            hideTypingAnimation();
             console.error('Error:', error);
         });
     
@@ -152,6 +167,8 @@ $(function () {
     
             // Clear any UI elements displaying the conversation
             $messages.empty();
+
+            document.getElementById('chatgpt-response').textContent = "";
     
             // Also, clear the client-side conversation log
             conversationLog = [];

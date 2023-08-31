@@ -1,85 +1,110 @@
-    body {
-        font-family: 'Comic Sans MS', cursive, sans-serif;
-        background-color: #f2f2f2;
-        margin: 0;
-        padding: 0;
-    }
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
 
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-    }
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-    .center-align {
-        text-align: center;
-    }
+.center-align {
+    text-align: center;
+}
 
-    .center-align textarea {
-        margin: 0 auto;
-        display: block;
-    }
+.center-align textarea {
+    margin: 0 auto;
+    display: block;
+}
 
-    .message {
-        background-color: #f9f9f9;
-        padding: 10px;
-        margin-bottom: 20px;
-    }
+.message {
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 20px;
+}
 
-    #buttons {
-        margin-top: 20px;
-    }
+#buttons {
+    margin-top: 20px;
+}
 
-    .recording-btn {
-        background-color: #008080;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin-right: 10px;
-        cursor: pointer;
-    }
+.recording-btn {
+    background-color: #008080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 10px;
+    cursor: pointer;
+}
 
-    .recording-btn:disabled {
-        background-color: #ccc;
-        cursor: not-allowed;
-    }
+.recording-btn:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
 
-    #voice-recording-section {
-        margin-top: 20px;
-    }
+#voice-recording-section {
+    margin-top: 20px;
+}
 
-    #input,
-    #chatgpt-response {
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        resize: vertical;
-    }
+#input,
+#chatgpt-response {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
 
-    #output {
-        margin-top: 10px;
-    }
+#output {
+    margin-top: 10px;
+}
 
-    #logo {
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        text-align: center;
-        color: #008080;
-        font-family: Helvetica, Arial, sans-serif;
-    }
+#logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #008080;
+    font-family: Helvetica, Arial, sans-serif;
+}
 
-    #avatar {
+#avatar {
     position: fixed;
     top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     max-width: 400px;
     max-height: 400px;
+}
+
+/* Added CSS for the "typing" animation */
+
+#chatbot-typing {
+    text-align: center;
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+#chatbot-typing span {
+    display: inline-block;
+    animation: typingAnimation 1s infinite;
+}
+
+@keyframes typingAnimation {
+    0% { opacity: 0; }
+    25% { opacity: 1; }
+    50% { opacity: 0; }
+    75% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.hidden {
+    display: none;
 }
