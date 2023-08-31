@@ -3,13 +3,15 @@ $(function () {
     const $button = $('#send-button');
     const $messages = $('#messages');
     const $hiddenDiv = $('.hidden');
-
+    const $resetButton = $('#reset-button');
+    
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
 
     const startButton = document.getElementById("start-button");
     const stopButton = document.getElementById("stop-button");
+    document.getElementById('reset-button').addEventListener('click', resetConversation);
     const input = document.getElementById("input");
 
     let recordedSpeech = "";
@@ -134,5 +136,28 @@ $(function () {
             console.error('Error:', error);
         });
     
+    }
+
+    function resetConversation() {
+        fetch('http://localhost:5000/reset-conversation', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: userId }) // Use the userId variable here
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+    
+            // Clear any UI elements displaying the conversation
+            $messages.empty();
+    
+            // Also, clear the client-side conversation log
+            conversationLog = [];
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     }
 });

@@ -77,5 +77,19 @@ app.post("/respond", async (req, res) => {
   }
 });
 
+app.delete("/reset-conversation", async (req, res) => {
+  try {
+      const userId = req.body.userId || "defaultUser"; // Use "defaultUser" if no userId is provided, but ideally you should always provide one
+
+      // Find the conversation associated with the userId and delete it
+      await Conversation.findOneAndDelete({ userId: userId });
+
+      return res.status(200).json({ message: "Conversation history reset successfully" });
+  } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({ error: "Server error" });
+  }
+});
+
 const port = process.env.PORT || portNum;
 app.listen(port, () => console.log('Listening on port:', port));
