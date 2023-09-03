@@ -15,7 +15,6 @@ mongoose.connect(mongodbURI, { useNewUrlParser: true, useUnifiedTopology: true }
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
 
-// Define MongoDB Schema and Model for Conversations
 const ConversationSchema = new mongoose.Schema({
   userId: String,
   logs: Array
@@ -79,7 +78,7 @@ app.post("/respond", async (req, res) => {
 
 app.delete("/reset-conversation", async (req, res) => {
   try {
-      const userId = req.body.userId || "defaultUser"; // Use "defaultUser" if no userId is provided, but ideally you should always provide one
+      const userId = req.body.userId || "defaultUser"; 
 
       // Find the conversation associated with the userId and delete it
       await Conversation.findOneAndDelete({ userId: userId });
